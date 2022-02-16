@@ -31,3 +31,56 @@ bool del(string ssn)
 // implemet retrive function
 
 // implement the file open codes bason the reference document given
+int main()
+{
+    fstream newfile;
+    newfile.open("500-idr", ios::in); // open the file
+
+    int iCounter = 0;
+    int dCounter = 0;
+    int rCounter = 0;
+
+    if (!newfile)
+    {
+        cout << "No such file";
+    }
+    else
+    {
+        if (newfile.is_open())
+        { // checking whether the file is open
+            string tp;
+            while (getline(newfile, tp))
+            { // read data from file object and put it into string.
+
+                string op = tp.substr(0, 1); // get the operation - insert/delete/replace
+
+                string ssn = tp.substr(2, 10);
+                string name = tp.substr(11);
+                cout << op << " : " << ssn << " " << name << "\n"; // print the data of the string
+
+                if (op.compare("i") == 0)
+                {
+
+                    iCounter++;
+                }
+
+                else if (op.compare("d") == 0)
+                {
+
+                    dCounter++;
+                }
+
+                else if (op.compare("r") == 0)
+                {
+                    rCounter++;
+                }
+            }
+            newfile.close(); // close the file object.
+            cout << " iCounter " << iCounter << endl;
+            cout << " dCounter " << dCounter << endl;
+            cout << " rCounter " << rCounter << endl;
+        }
+    }
+    newfile.close();
+    return 0;
+}
