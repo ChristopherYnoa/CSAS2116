@@ -18,10 +18,6 @@ int size = 1000;
 // purpose : To check whether the given ssn is exist or not
 bool exist(string ssn)
 {
-    for (int i = 0; i < 1000; i++)
-        if (ssn = array[i])
-            return true;
-
     return false;
 }
 // insert : string, string -> boolean
@@ -68,19 +64,19 @@ int main()
                 string ssn = tp.substr(2, 10);
                 string name = tp.substr(11);
                 cout << op << " : " << ssn << " " << name << "\n"; // print the data of the string
-                // ssninfo *array = new ssninfo[size];
+                ssninfo *array = new ssninfo[1000];
 
-                string array[15] = {};
-
-                if (i < 15)
-                {
-                    array[i++] = ssn;
-                    cout << "SSN:" << array[i - 1] << endl;
-                }
+                // if (i < 15)
+                // {
+                //     array[i++] = ssn;
+                //     cout << "SSN:" << array[i - 1] << endl;
+                // }
 
                 if (op.compare("i") == 0)
                 {
                     //    array->ssn = ssn;
+                    array[i].ssn = ssn;
+                    cout << array[i].ssn;
 
                     iCounter++;
                 }
