@@ -16,13 +16,17 @@ int size = 1000;
 
 // exist : string -> boolean
 // purpose : To check whether the given ssn is exist or not
-bool exist(string ssn)
+bool exist(string ssn, struct ssninfo array[])
 {
+    for (int i = 0; i < 1000; i++)
+        if (array[i].ssn == ssn)
+            return true;
+
     return false;
 }
 // insert : string, string -> boolean
 // purpose : To add ssn and name in the array
-bool insert(string ssn, string name)
+bool insert(string ssn, string name, struct ssninfo array[])
 {
 
     return true;
@@ -74,9 +78,18 @@ int main()
 
                 if (op.compare("i") == 0)
                 {
-                    //    array->ssn = ssn;
-                    array[i].ssn = ssn;
-                    cout << array[i].ssn;
+                    // array[i].ssn = ssn;
+                    bool a = exist(ssn, array);
+                    if (a == true)
+                    {
+                        cout << "It exists" << endl;
+                    }
+                    else
+                    {
+                        cout << "Does not exist" << endl;
+                    }
+
+                    cout << "SSN: " << array[i].ssn << endl;
 
                     iCounter++;
                 }
