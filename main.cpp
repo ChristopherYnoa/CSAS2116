@@ -22,9 +22,24 @@ bool exist(string ssn, struct ssninfo array[])
     for (int i = 0; i < arr_size; i++)
         if (array[i].ssn == ssn)
             return true;
-
-    return false;
+        else
+        {
+            return false;
+        }
 }
+
+int existLocation(string ssn, struct ssninfo array[])
+{
+
+    if (exist(ssn, array))
+    {
+
+        for (int i = 0; i < arr_size; i++)
+            if (array[i].ssn == ssn)
+                return i;
+    }
+}
+
 // insert : string, string -> boolean
 // purpose : To add ssn and name in the array
 bool insert(string ssn, string name, struct ssninfo array[])
@@ -48,17 +63,61 @@ bool insert(string ssn, string name, struct ssninfo array[])
             array[array_length].ssn = ssn;
             array[array_length].name = name;
         }
+        array_length++;
         return true;
     }
 }
 
 // del : string -> boolean
 // purpose : To delete name from the array based on ssn
-bool del(string ssn)
-{
-    return true;
+bool del(string ssn, struct ssninfo array[])
+{ /*
+     for (int i = 0; i < arr_size; i++)
+         if (array[i].ssn == ssn)
+         {
+             array[i].ssn = ' ';
+             return true;
+         }*/
+    if (exist(ssn, array) == true)
+    {
+        int temp = existLocation(ssn, array);
+
+        // string temp = array[];
+
+        for (int i = temp; i < (array_length - 1); ++i)
+        {
+            array[i] = array[i + 1];
+        }
+
+        array[array_length - 1] = {};
+        array_length--;
+        return true;
+    }
+    return false;
 }
-// implemet retrive function
+// retrive: string, string, array -> bool
+// purpose: To retrive ssn and name from the array
+bool retrive(string ssn, string name, struct ssninfo array[])
+{
+    bool a = (exist(ssn, array));
+
+    if (a != true)
+    {
+        return false;
+    }
+    else
+    {
+        for (int i = 0; i <= arr_size; i++)
+            if (array[i].name == name)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+    }
+}
 
 // implement the file open codes bason the reference document given
 int main()
@@ -98,20 +157,25 @@ int main()
                     {
                         iCounter++;
                     }
-
-                    array_length++;
                 }
 
-                else if (op.compare("d") == 0)
-                {
+                /* else if (op.compare("d") == 0)
+                         {
+                             if (del(ssn, array) == true)
+                             {
+                                 dCounter++;
 
-                    dCounter++;
-                    array_length--;
-                }
+                             }
+
+
+                         }*/
 
                 else if (op.compare("r") == 0)
                 {
-                    rCounter++;
+                    if (retrive(ssn, name, array) == true)
+                    {
+                        rCounter++;
+                    }
                 }
                 i++;
             }
@@ -124,3 +188,21 @@ int main()
     newfile.close();
     return 0;
 }
+// TEST(TestCaseName, TestName)
+// {
+//     string ssn("631213674"); // this ssn is not present already
+//     string name("Mike Hussey");
+//     ssninfo* array = new ssninfo[1000];
+
+//   //INSERT
+//   EXPECT_EQ(true, insert(ssn, name, array));
+//   EXPECT_EQ(false, insert(ssn, name, array));
+
+//   //RETRIVE
+//   EXPECT_EQ(true, retrive(ssn, name, array));
+
+//   //DEL
+//   EXPECT_EQ(true, del(ssn, array));
+//   EXPECT_EQ(false, del(ssn, array));
+
+// }
