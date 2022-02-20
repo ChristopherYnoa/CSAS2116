@@ -1,8 +1,11 @@
+#include "pch.h"
 // Project 1 - Database Management using Arrays
 
 #include <iostream>
 #include <fstream> //header file for file handling system
 #include <string>
+#include <cstdio>
+#include <ctime>
 using namespace std;
 
 // create the structure for ssn and name
@@ -12,26 +15,29 @@ struct ssninfo
     string name;
 };
 
-int arr_size = 1000;
-int array_length = 0;
+int arr_size = 500;
+int array_length;
 
-// exist : string -> boolean
+// exist : string, struct, int -> boolean
 // purpose : To check whether the given ssn is exist or not
-bool exist(string ssn, struct ssninfo array[])
+bool exist(string ssn, struct ssninfo array[], int arr_size)
 {
-    for (int i = 0; i < arr_size; i++)
-        if (array[i].ssn == ssn)
-            return true;
-        else
+    int i = 0;
+    while (i != arr_size)
+    {
+        if (ssn == array[i].ssn)
         {
-            return false;
+            return true;
         }
+        i++;
+    }
+    return false;
 }
 
-int existLocation(string ssn, struct ssninfo array[])
+int existLocation(string ssn, struct ssninfo array[], int arr_size)
 {
 
-    if (exist(ssn, array))
+    if (exist(ssn, array, arr_size))
     {
 
         for (int i = 0; i < arr_size; i++)
@@ -40,11 +46,11 @@ int existLocation(string ssn, struct ssninfo array[])
     }
 }
 
-// insert : string, string -> boolean
+// insert : string, string, struct, int -> boolean
 // purpose : To add ssn and name in the array
-bool insert(string ssn, string name, struct ssninfo array[])
+bool insert(string ssn, string name, struct ssninfo array[], int arr_size)
 {
-    bool a = exist(ssn, array);
+    bool a = exist(ssn, array, arr_size);
     if (a == true)
     {
         return false;
@@ -68,19 +74,13 @@ bool insert(string ssn, string name, struct ssninfo array[])
     }
 }
 
-// del : string -> boolean
+// del : string, struct, int -> boolean
 // purpose : To delete name from the array based on ssn
-bool del(string ssn, struct ssninfo array[])
-{ /*
-     for (int i = 0; i < arr_size; i++)
-         if (array[i].ssn == ssn)
-         {
-             array[i].ssn = ' ';
-             return true;
-         }*/
-    if (exist(ssn, array) == true)
+bool del(string ssn, struct ssninfo array[], int arr_size)
+{
+    if (exist(ssn, array, arr_size) == true)
     {
-        int temp = existLocation(ssn, array);
+        int temp = existLocation(ssn, array, arr_size);
 
         // string temp = array[];
 
@@ -95,39 +95,36 @@ bool del(string ssn, struct ssninfo array[])
     }
     return false;
 }
-// retrive: string, string, array -> bool
+// retrive: string, string, struct, int -> bool
 // purpose: To retrive ssn and name from the array
-bool retrive(string ssn, string name, struct ssninfo array[])
+bool retrive(string ssn, string name, struct ssninfo array[], int arr_size)
 {
-    bool a = (exist(ssn, array));
-
-    if (a != true)
+    for (int i = 0; i < arr_size; i++)
     {
-        return false;
+        if ((array[i].ssn == ssn) && !name.compare(array[i].name))
+        {
+            return true;
+        }
     }
-    else
-    {
-        for (int i = 0; i <= arr_size; i++)
-            if (array[i].name == name)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-    }
+    return false;
 }
 
 // implement the file open codes bason the reference document given
 int main()
 {
+    clock_t start, end;
+    double duration;
+
+    start = clock();
     fstream newfile;
+
     newfile.open("15-idr", ios::in); // open the file
 
     int iCounter = 0;
     int dCounter = 0;
     int rCounter = 0;
+
+    // int arr_size = 500;
 
     if (!newfile)
     {
@@ -139,40 +136,35 @@ int main()
         { // checking whether the file is open
             string tp;
             int i = 0;
+            ssninfo *array = new ssninfo[arr_size];
             while (getline(newfile, tp))
             { // read data from file object and put it into string.
 
                 string op = tp.substr(0, 1); // get the operation - insert/delete/replace
-
                 string ssn = tp.substr(2, 10);
                 string name = tp.substr(11);
-                // cout << op << " : " << ssn << " " << name << "\n"; // print the data of the string
-                ssninfo *array = new ssninfo[1000];
 
                 if (op.compare("i") == 0)
                 {
 
-                    // cout << "SSN: " << array[i].ssn << "Name:" << array[i].name << endl;
-                    if (insert(ssn, name, array) == true)
+                    if (insert(ssn, name, array, arr_size) == true)
                     {
                         iCounter++;
                     }
                 }
 
-                /* else if (op.compare("d") == 0)
-                         {
-                             if (del(ssn, array) == true)
-                             {
-                                 dCounter++;
-
-                             }
-
-
-                         }*/
+                else if (op.compare("d") == 0)
+                {
+                    if (del(ssn, array, arr_size) == true)
+                    {
+                        dCounter++;
+                    }
+                }
 
                 else if (op.compare("r") == 0)
                 {
-                    if (retrive(ssn, name, array) == true)
+
+                    if (retrive(ssn, name, array, array_length) == true)
                     {
                         rCounter++;
                     }
@@ -180,29 +172,60 @@ int main()
                 i++;
             }
             newfile.close(); // close the file object.
-            cout << " iCounter " << iCounter << endl;
-            cout << " dCounter " << dCounter << endl;
-            cout << " rCounter " << rCounter << endl;
+
+            cout << " The Number of Valid Insertion: " << iCounter << endl;
+            cout << " The Number of Valid Deletion: " << dCounter << endl;
+            cout << " The Number of Valid Retireval: " << rCounter << endl;
+            cout << " Item numbers in the array: " << iCounter - dCounter << endl;
+            cout << " Array Size is: " << arr_size << endl;
+
+            end = clock();
+            duration = (end - start) / (double)CLOCKS_PER_SEC;
+
+            cout << " Time elapsed: " << duration << '\n';
         }
     }
     newfile.close();
     return 0;
 }
-// TEST(TestCaseName, TestName)
-// {
-//     string ssn("631213674"); // this ssn is not present already
-//     string name("Mike Hussey");
-//     ssninfo* array = new ssninfo[1000];
 
-//   //INSERT
-//   EXPECT_EQ(true, insert(ssn, name, array));
-//   EXPECT_EQ(false, insert(ssn, name, array));
+// test case to check whether it exist or not
+TEST(FriendlyIRS_sample_idr, existcheck)
+{
+    string ssn("631213674"); // this ssn is not present already
+    string ssn1("238713674");
+    string name("Mike Hussey");
+    ssninfo *array = new ssninfo[1000];
+    int arr_size = 500;
 
-//   //RETRIVE
-//   EXPECT_EQ(true, retrive(ssn, name, array));
+    insert(ssn, name, array, arr_size);
+    EXPECT_EQ(true, exist(ssn, array, arr_size));
+    EXPECT_EQ(false, exist(ssn1, array, arr_size));
+}
 
-//   //DEL
-//   EXPECT_EQ(true, del(ssn, array));
-//   EXPECT_EQ(false, del(ssn, array));
+// test case for addition check
+TEST(FriendlyIRS_sample_idr, additioncheck)
+{
+    string ssn("631213674"); // this ssn is not present already
+    string ssn1("238713674");
+    string name("Mike Hussey");
+    ssninfo *array = new ssninfo[1000];
+    int arr_size = 500;
 
-// }
+    EXPECT_EQ(true, insert(ssn, name, array, arr_size));
+    EXPECT_EQ(false, insert(ssn, name, array, arr_size));
+}
+
+// test cast for deletion check
+TEST(FriendlyIRS_sample_idr, deletioncheck)
+{
+    string ssn("631213674"); // this ssn is not present already
+    string ssn1("238713674");
+    string name("Mike Hussey");
+    ssninfo *array = new ssninfo[1000];
+    int arr_size = 500;
+
+    insert(ssn, name, array, arr_size);
+    EXPECT_EQ(true, del(ssn, array, arr_size));
+    EXPECT_EQ(false, del(ssn, array, arr_size));
+}
